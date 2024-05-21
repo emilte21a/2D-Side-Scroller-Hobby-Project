@@ -1,0 +1,339 @@
+@startuml SlutProjekt2
+
+Class GameObject{
+    public tag : string
+    public T AddComponent<T>();
+    public T? GetComponent<T>();
+    public List<Component> components;
+}
+
+Class GameSystem{
+    public virtual void Update();
+}
+
+
+Class PhysicsSystem{
+    public override void Update();
+}
+
+Class CollisionSystem{
+    public override void Update();
+}
+
+Class PhysicsBody{
+    public Vector2 Acceleration;
+    public Vector2 velocity;
+
+    public Vector2 gravity;
+
+    public Gravity UseGravity;
+    public AirState airState;
+
+    public void Jump(PhysicsBody physicsBody, float jumpForce);
+}
+Enum AirState{
+    inAir
+    grounded
+}
+
+Class Collider{
+    public Rectangle boxCollider;
+}
+
+Class Renderer{
+    public Texture2D sprite;
+}
+
+Class AudioPlayer{
+    public Sound audioClip;
+    public float AudioVolume;
+}
+
+Class Animator
+{
+    private int _frame;
+    private float _timer;
+    private int _maxTime;
+
+    public void PlayAnimation(Texture2D spriteSheet, int direction, int maxFrames, Vector2 position);
+}
+
+Interface IDrawable{
+    public void Draw();
+}
+
+Class WorldGeneration{
+
+    private int _worldSize;
+    private int _tileSiz;
+
+    public static List<Tile> tilesInWorld;
+    public static List<Tile> backgroundTiles;
+    public static List<Tile> tilesThatShouldRender;
+    public static List<Prefab> prefabs;
+
+    private int _seed;
+    private int _caveThreshold;
+    private float _surfaceThreshold;
+    private int _heightMultiplier;
+
+    public static Vector2[] spawnPoints;
+    public static string[] tileOccupation;
+    public Tile[,] tilemap;
+
+    public void GenerateTiles();
+    public void SpawnTile(Tile tile);
+    public void SpawnPrefab(Prefab prefab);
+    public void Draw();
+    public Tile GetTileAt(Vector2 position);
+    public void GeneratePrefabs();
+}
+
+Class Component {}
+
+Class DayNightSystem{
+    public float currentTime;
+    public int dayDuration;
+    Rectangle skyRectangle;
+    Color dayColor;
+    Color nightColor;
+    Texture2D sunSprite;
+    Texture2D moonSprite;
+    private float _rotation;
+    private int _timePerHour;
+    private int _overLayAlpha;
+
+    public void Update();
+    public void Draw();
+    private void DrawCelestialBodies();
+    public static double CalculateRotation(float x);
+    public void DrawNightOverlay();
+}
+
+
+Class LightingSystem{
+    private int[,] lightMap;
+    private Image _lightMapImage;
+    public Texture2D lightMapTexture;
+
+    public void InitializeLightMap(Tile[,] tileMap);
+    private Image CreateLightMapImage();
+    public void InstantiateLightMap(Tile[,] tileMap);
+}
+
+Class AudioSystem{
+    public override void Update();
+    private float VolumeFallof(Entity entity1, Entity entity2);
+}
+
+class ParallaxLayer{
+    public Texture2D texture;
+    public Vector2 position;
+    public Rectangle rectangle;
+    public float parallaxFactor;
+
+    public Color color;
+}
+
+Class ParallaxManager{
+    List<ParallaxLayer> parallaxLayers;
+    Texture2D layer1;
+    Texture2D layer2;
+    Texture2D cloudsTexture;
+    float scroll;
+    public void Update(Player player);
+    public void Draw();
+}
+
+Class Prefab{
+    public Vector2 position;
+    public Rectangle rectangle;
+    public Collider collider;
+    public Renderer renderer
+    Protected static List<Texture2D> textures;
+    public Dictionary<ItemType, int> dropType;
+}
+
+Class InputManager{
+    public static float GetAxisX();
+    public static float GetAxisY();
+    private static int _directionDelta;
+    public static float GetLastDirectionDelta();
+}
+
+Class PlayerAction{
+    public Rectangle handRectangle;
+    Vector2 position;
+    float timer;
+    public float rotation;
+    public Vector2 origin;
+    public RotationDirection rotationDirection;
+    public int attackCount;
+
+    public void Update();
+
+    private bool isRotating;
+    private float targetRotation;
+    private const float rotationSpeed;
+    public int yScale;
+    public int xScale;
+    public void OnClick(Vector2 playerPosition, int direction, Inventory inventory);
+}
+
+PlayerAction --* RotationDirection : use
+
+Enum RotationDirection{
+    up
+    down
+}
+
+Class Inventory{
+    public static Inventory current;
+    public Dictionary<Item, int> itemsInInventory;
+    private Slot[] inventoryHotbar;
+    private Slot[,] inventoryBackpack;
+    private Texture2D _hotbarTexture;
+    private Texture2D _itemChosenTexture;
+    private bool _shouldShowInventory;
+    public Item currentActiveItem;
+    int xIndex;
+    int yIndex;
+    int itemPos;
+    int activeItemIndex;
+    public void Update();
+    public void Draw();
+    public int CurrrentItemIndex();
+    public void AddToInventory(Item item, int quantity);
+    public void RemoveFromInventory(Item item);
+    public int FindFirstEmptySlot();
+    public bool CanCraft(Item item);
+    public void CraftItem(Item item);
+    private void UpdateInventoryBackpack();
+}
+
+
+Struct Slot{
+    public Vector2 position;
+    public Item item;
+    public int index;
+}
+
+Inventory --* Slot : Use
+
+PhysicsSystem --> PhysicsBody : use
+PhysicsSystem *-- GameSystem
+PhysicsBody --> AirState : use
+CollisionSystem --> Collider : use
+CollisionSystem *-- GameSystem
+
+AudioSystem *-- GameSystem
+
+Collider *-- Component
+PhysicsBody *-- Component
+Renderer *-- Component
+AudioPlayer *-- Component
+Animator *-- Component
+
+Entity Player{
+    public Camera2D camera;
+    public PhysicsBody physicsBody;
+    public Renderer renderer;
+    public Collider collider;
+    public AudioPlayer audioPlayer;
+    public Animator animator;
+    public Inventory inventory;
+    public PlayerAction playerAction;
+    private float _playerSpeed;
+    public int healthPoints;
+    private Texture2D spriteSheet;
+    public static PlayerState playerState;
+
+    public override void Update();
+    public override Draw();
+    public void MovePlayer(PhysicsBody physicsBody, float speed);
+    private int FallDamage();
+    private void DrawCurrentItemAnimation();
+}
+
+enum PlayerState{
+    inInventory
+    inGame
+    inMenu
+}
+
+Player --* PlayerState : use
+
+Entity Entity{
+    protected Rectangle rectangle;
+    public Vector2 lastDirection;
+    public Vector2 position;
+
+    public virtual void Update();
+    public virtual void Draw();
+}
+
+Class Tile{
+    public Texture2D texture;
+    public Vector2 position;
+    piublic Rectangle rectangle;
+}
+
+GameObject *-- Entity
+GameObject *-- Tile
+GameObject *-- Item
+WorldGeneration --* Prefab
+Player --* Inventory : use
+
+Entity *-- Player
+IDrawable <-- Player
+IDrawable <-- WorldGeneration
+
+Class Game{
+    public static int ScreenWidth;
+    public static int ScreenHeight;
+
+    SceneHandler sceneHandler;
+    Player player;
+    WorldGeneration worldGeneration;
+    ParallaxManager parallaxManager;
+    DayNightSystem dayNightSystem;
+    GUIcontroller gUIcontroller;
+    LightingSystem lightingSystem;
+
+    public static Camera2D camera;
+    List<IDrawable> drawables;
+    List<GameSystem> gameSystems;
+
+    public static List<Entity> entities;
+    public static List<GameObject> gameObjects;
+    public static List<GameObject> gameObjectsToDestroy;
+
+    private void IntializeInstances();
+    public void Run();
+    private void Update();
+    private void Draw();
+}
+
+class Item{
+    public string name;
+    public int ID;
+    public bool craftable;
+    public bool stackable;
+    public Texture2D texture;
+    public int itemDamage;
+    public bool usable;
+    public Dictionary<Item, int> recipe;
+    public ItemType itemType;
+
+    public override bool Equals(object obj);
+}
+
+ParallaxManager --* ParallaxLayer : use
+
+Game ..> ParallaxManager : use
+Game ..> LightingSystem : use
+Game ..> WorldGeneration : use
+Game ..> DayNightSystem : use
+Tile *-- WorldGeneration : use
+Player --> PlayerAction : use
+@enduml
