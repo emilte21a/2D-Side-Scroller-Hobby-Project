@@ -72,12 +72,13 @@ public class DayNightSystem
     public void DrawNightOverlay()
     {
         Raylib.DrawRectangle(0, 0, Game.ScreenWidth, Game.ScreenHeight, new Color(nightColor.R, nightColor.G, nightColor.B, _overlayAlpha));
-        Raylib.BeginBlendMode(BlendMode.SubtractColors);
+        Raylib.BeginBlendMode(BlendMode.Additive);
         for (int i = 0; i < WorldGeneration.gameObjectsThatShouldRender.Count; i++)
         {
             if (WorldGeneration.gameObjectsThatShouldRender[i] is ILightSource lightSource)
             {
-                Raylib.DrawCircleGradient((int)WorldGeneration.gameObjectsThatShouldRender[i].position.X / 80, (int)WorldGeneration.gameObjectsThatShouldRender[i].position.Y / 80, 150, Color.Orange, Color.Blank);
+                Vector2 pos = Raylib.GetWorldToScreen2D(new Vector2(WorldGeneration.gameObjectsThatShouldRender[i].position.X, WorldGeneration.gameObjectsThatShouldRender[i].position.Y), Game.camera);
+                Raylib.DrawCircleGradient((int)pos.X + 40, (int)pos.Y + 40, 150, new Color(Color.Orange.R, Color.Orange.G, Color.Orange.B, (byte)130), Color.Blank);
             }
         }
         Raylib.EndBlendMode();
