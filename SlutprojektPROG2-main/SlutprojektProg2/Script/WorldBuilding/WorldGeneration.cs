@@ -146,8 +146,19 @@ public class WorldGeneration : IDrawable
     //Metod som ritar ut varje tile och prefab som finns i världen
     public void Draw()
     {
-        gameObjectsThatShouldRender.ForEach(TP => Raylib.DrawTexture(TP.renderer.sprite, (int)TP.position.X, (int)TP.position.Y, Color.White));
-        // gameObjectsInWorld.ForEach(TP => Raylib.DrawTexture(TP.renderer.sprite, (int)TP.position.X, (int)TP.position.Y, Color.White));
+
+        for (int i = 0; i < gameObjectsThatShouldRender.Count; i++)
+        {
+            if (gameObjectsThatShouldRender[i].GetType() != typeof(Torch))
+                Raylib.DrawTexture(gameObjectsThatShouldRender[i].renderer.sprite, (int)gameObjectsThatShouldRender[i].position.X, (int)gameObjectsThatShouldRender[i].position.Y, Color.White);
+
+            else
+            {
+                Animator? animator = gameObjectsThatShouldRender[i].GetComponent<Animator>();
+                animator.PlayAnimation(gameObjectsThatShouldRender[i].renderer.sprite, 1, 4, gameObjectsThatShouldRender[i].position);
+            }
+        }
+        //gameObjectsThatShouldRender.ForEach(TP => Raylib.DrawTexture(TP.renderer.sprite, (int)TP.position.X, (int)TP.position.Y, Color.White));
     }
 
     public TilePref GetTileAt(Vector2 position)

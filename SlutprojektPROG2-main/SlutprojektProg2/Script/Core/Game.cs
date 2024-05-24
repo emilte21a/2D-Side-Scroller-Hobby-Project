@@ -53,7 +53,7 @@ public class Game
         Raylib.InitAudioDevice();
         gameObjectsToDestroy = new List<GameObject>();
         InitializeInstances();
-        lightingSystem.InstantiateLightMap(WorldGeneration.tilemap); // Måste köras efter initwindow
+        lightingSystem.InstantiateLightMap(); // Måste köras efter initwindow
 
         // gameObjects = new ObservableCollection<GameObject>(WorldGeneration.gameObjectsInWorld);
 
@@ -113,7 +113,7 @@ public class Game
         }
         else if (sceneHandler.currentScene == SceneHandler.CurrentSceneState.Game && !paused)
         {
-
+            lightingSystem.UpdateLightmap(player.position);
             updateDayNightCycle = new Task(dayNightSystem.Update);
             updateDayNightCycle.Start();
 
@@ -140,13 +140,15 @@ public class Game
                 if (posX >= 0 && posX < WorldGeneration.tilemap.GetLength(0) && posY >= 0 && posY < WorldGeneration.tilemap.GetLength(1))
                 {
                     TilePref currentTile = WorldGeneration.tilemap[posX, posY];
-                    System.Console.WriteLine(currentTile);
+                    Console.WriteLine(currentTile);
                     if (currentTile == null || currentTile.tag == "BackgroundTile")
                     {
-                        Prefab tile = new Torch(pos * 80);
-                        worldGeneration.SpawnTilePrefab(tile);
-                        WorldGeneration.tilemap[posX, posY] = tile;
-                        LightingSystem.shouldUpdateLightingSystem = true;
+                        if (player.inventory.currentActiveItem is IPlaceable placeableItem)
+                        {
+                            TilePref tile = placeableItem.TilePrefToPlace(pos * 80);
+                            worldGeneration.SpawnTilePrefab(tile);
+                            WorldGeneration.tilemap[posX, posY] = tile;
+                        }
                     }
                 }
             }
@@ -162,16 +164,12 @@ public class Game
                 System.Console.WriteLine("");
                 System.Console.WriteLine(GC.GetTotalMemory(true));
             }
-
-            if (LightingSystem.shouldUpdateLightingSystem)
-            {
-                lightingSystem.InstantiateLightMap(WorldGeneration.tilemap);
-                LightingSystem.shouldUpdateLightingSystem = false;
-            }
         }
         else if (sceneHandler.currentScene == SceneHandler.CurrentSceneState.Gameover)
             System.Console.WriteLine("Gameover");
     }
+
+
 
     private void Draw()
     {
@@ -189,7 +187,7 @@ public class Game
 
         else if (sceneHandler.currentScene == SceneHandler.CurrentSceneState.Game)
         {
-            lightingSystem.UpdateLightmap(player.position);
+
             dayNightSystem.Draw();
             parallaxManager.Draw();
             Raylib.BeginMode2D(camera);
@@ -229,7 +227,6 @@ public class Game
                 if (close)
                     Raylib.CloseWindow();
             }
-
         }
         Raylib.EndDrawing();
     }

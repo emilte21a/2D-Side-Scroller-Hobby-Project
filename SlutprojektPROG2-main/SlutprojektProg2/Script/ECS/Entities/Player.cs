@@ -48,11 +48,10 @@ public sealed class Player : Entity, IDrawable
         playerState = PlayerState.inGame;
 
         renderer.sprite = Raylib.LoadTexture("Images/CharacterSprite.png");
-        audioPlayer.audioClip = Raylib.LoadSound("");
 
         rectangle = new Rectangle(0, 0, renderer.sprite.Width, renderer.sprite.Height);
 
-        position = new Vector2(0, -1000);
+        position = new Vector2(rectangle.X, rectangle.Y);
         physicsBody.UseGravity = PhysicsBody.Gravity.enabled;
         collider.boxCollider = rectangle;
     }
@@ -74,7 +73,6 @@ public sealed class Player : Entity, IDrawable
 
             if (Raylib.IsKeyPressed(KeyboardKey.Space)) //&& physicsBody.airState == AirState.grounded)
                 physicsBody.Jump(physicsBody, 1000 * Raylib.GetFrameTime());
-
 
             if (Raylib.IsKeyPressed(KeyboardKey.H))
                 healthPoints = 100;

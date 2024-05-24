@@ -22,7 +22,7 @@ public class Inventory
     {
         itemsInInventory = new Dictionary<Item, int>();
         inventoryHotbar = new Slot[5];
-        inventoryBackpack = new Slot[10, 5];
+        inventoryBackpack = new Slot[5, 3];
     }
 
     int xIndex = 0;
@@ -79,7 +79,7 @@ public class Inventory
             {
                 for (int y = 0; y < inventoryBackpack.GetLength(1); y++)
                 {
-                    Raylib.DrawTexture(_itemFrameTexture, x * 80 + 295, y * 80 + 90, Color.White);
+                    Raylib.DrawTexture(_itemFrameTexture, x * 80 + Game.ScreenWidth / 2 - inventoryBackpack.GetLength(0) * 80 / 2 + 40, y * 80 + 200, Color.White);
                     if (inventoryBackpack[x, y].item != null)
                     {
                         Raylib.DrawTexture(inventoryBackpack[x, y].item.texture, x * 80 + 305, y * 80 + 100, Color.White);

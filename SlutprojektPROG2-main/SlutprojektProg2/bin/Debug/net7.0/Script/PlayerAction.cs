@@ -76,7 +76,6 @@ public class PlayerAction
                     Game.gameObjectsToDestroy.Add(GO);
                     WorldGeneration.gameObjectsInWorld.Remove(GO);
                     WorldGeneration.tilemap[(int)position.X / 80, (int)position.Y / 80] = null;
-                    LightingSystem.shouldUpdateLightingSystem = true;
                 }
             }
         }

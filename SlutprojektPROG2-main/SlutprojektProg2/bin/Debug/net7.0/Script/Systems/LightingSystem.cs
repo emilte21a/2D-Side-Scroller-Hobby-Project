@@ -1,6 +1,5 @@
 public class LightingSystem
 {
-    public static bool shouldUpdateLightingSystem = false;
     private int[,] lightMap; //En array av ints som bestämmer ljusnivån på varje position
     private Image _lightMapImage; //En bild som man ritar på för att visa rätt värden
     public RenderTexture2D lightMapTexture; //En texture som man ritar ut som overlay över världen
@@ -25,8 +24,14 @@ public class LightingSystem
                     lightMap[x, y + 1] = 15;
                     lightMap[x, y + 2] = 15;
                 }
-                else if (tileMap[x, y] is ILightSource)
+                else if (tileMap[x, y] is ILightSource && y > 1 && x > 1 && y < height - 1 && x < width - 1)
+                {
                     lightMap[x, y] = 15;
+                    lightMap[x + 1, y] = 15;
+                    lightMap[x - 1, y] = 15;
+                    lightMap[x, y + 1] = 15;
+                    lightMap[x, y - 1] = 15;
+                }
                 else
                 {
                     if (y > 1 && y < height - 1 && x > 0 && x < width - 1)
@@ -60,9 +65,9 @@ public class LightingSystem
         return img;
     }
 
-    public void InstantiateLightMap(TilePref[,] tileMap)
+    public void InstantiateLightMap()
     {
-        InitializeLightmap(tileMap);
+        InitializeLightmap(WorldGeneration.tilemap);
         _lightMapImage = CreateLightMapImage();
         lightMapTexture.Texture = Raylib.LoadTextureFromImage(_lightMapImage);
         Raylib.BeginTextureMode(lightMapTexture);
@@ -73,8 +78,15 @@ public class LightingSystem
 
     public void UpdateLightmap(Vector2 pos)
     {
+        InitializeLightmap(WorldGeneration.tilemap);
+        _lightMapImage = CreateLightMapImage();
         Raylib.BeginTextureMode(lightMapTexture);
         Raylib.DrawCircleGradient((int)pos.X, (int)pos.Y, 100, new Color(255, 255, 255, 255), new Color(255, 255, 255, 0));
+        unsafe
+        {
+            Raylib.UpdateTexture(lightMapTexture.Texture, _lightMapImage.Data);
+        }
         Raylib.EndTextureMode();
+        Raylib.UnloadImage(_lightMapImage);
     }
 }

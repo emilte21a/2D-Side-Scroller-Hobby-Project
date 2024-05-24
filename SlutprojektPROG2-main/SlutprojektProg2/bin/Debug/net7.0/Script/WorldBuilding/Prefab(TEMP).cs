@@ -62,20 +62,22 @@ public sealed class Rock : Prefab
 public sealed class Torch : Prefab, ILightSource
 {
     private static Texture2D torchTexture;
+    public Animator animator;
 
     public Torch(Vector2 pos)
     {
         position = pos;
         components = new();
         renderer = AddComponent<Renderer>();
+        animator = AddComponent<Animator>();
 
         if (torchTexture.Id == 0)
-            torchTexture = Raylib.LoadTexture("Images/torchTexture.png");
+            torchTexture = Raylib.LoadTexture("Images/torchAnimation.png");
 
         renderer.sprite = torchTexture;
         rectangle = new Rectangle(0, 0, renderer.sprite.Width, renderer.sprite.Height);
 
-        position.Y -= renderer.sprite.Height;
+        position.Y -= renderer.sprite.Height / 2;
         rectangle.X = position.X;
         rectangle.Y = position.Y;
 
