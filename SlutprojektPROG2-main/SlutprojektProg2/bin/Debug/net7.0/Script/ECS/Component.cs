@@ -9,7 +9,7 @@ public class PhysicsBody : Component
 
     public Vector2 velocity = Vector2.Zero;
 
-    public Vector2 gravity = new Vector2(0, 50f);
+    public Vector2 gravity = new Vector2(0, 20f);
 
     public Gravity UseGravity;
 

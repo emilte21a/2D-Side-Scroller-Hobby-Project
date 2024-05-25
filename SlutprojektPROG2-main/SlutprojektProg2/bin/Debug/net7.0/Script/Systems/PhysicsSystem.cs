@@ -10,12 +10,12 @@ public class PhysicsSystem : GameSystem
             if (physicsBody != null && physicsBody.UseGravity == PhysicsBody.Gravity.enabled)
             {
                 //Lägg till acceleration
-                physicsBody.acceleration += physicsBody.gravity * Raylib.GetFrameTime() * 4;
+                physicsBody.acceleration = physicsBody.gravity * Raylib.GetFrameTime() * 2;
 
                 if (physicsBody.airState != AirState.grounded)
                 {
                     //Updatera velociteten  
-                    physicsBody.velocity.Y += physicsBody.acceleration.Y * Raylib.GetFrameTime() * 10;
+                    physicsBody.velocity.Y += physicsBody.acceleration.Y;
                 }
 
                 //Clampa maxhastigheten 
@@ -23,9 +23,6 @@ public class PhysicsSystem : GameSystem
 
                 //Uppdatera positionen
                 e.position += physicsBody.velocity * Raylib.GetFrameTime() * 100;
-
-                //Återställ accelerationen
-                physicsBody.acceleration = Vector2.Zero;
             }
         }
     }

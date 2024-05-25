@@ -4,7 +4,7 @@ public class DayNightSystem
 {
     public float currentTime;
 
-    public int dayDuration = 24;
+    public byte dayDuration = 24;
 
     Rectangle skyRectangle = new Rectangle(0, 0, Game.ScreenWidth, Game.ScreenHeight);
 
@@ -16,7 +16,7 @@ public class DayNightSystem
 
     private float _rotation = 0f;
 
-    private int _timePerHour = 10;
+    private ushort _timePerHour = 10;
 
     public DayNightSystem()
     {
@@ -72,15 +72,18 @@ public class DayNightSystem
     public void DrawNightOverlay()
     {
         Raylib.DrawRectangle(0, 0, Game.ScreenWidth, Game.ScreenHeight, new Color(nightColor.R, nightColor.G, nightColor.B, _overlayAlpha));
-        Raylib.BeginBlendMode(BlendMode.Additive);
         for (int i = 0; i < WorldGeneration.gameObjectsThatShouldRender.Count; i++)
         {
             if (WorldGeneration.gameObjectsThatShouldRender[i] is ILightSource lightSource)
             {
                 Vector2 pos = Raylib.GetWorldToScreen2D(new Vector2(WorldGeneration.gameObjectsThatShouldRender[i].position.X, WorldGeneration.gameObjectsThatShouldRender[i].position.Y), Game.camera);
-                Raylib.DrawCircleGradient((int)pos.X + 40, (int)pos.Y + 40, 150, new Color(Color.Orange.R, Color.Orange.G, Color.Orange.B, (byte)130), Color.Blank);
+                Raylib.BeginBlendMode(BlendMode.Multiplied);
+                Raylib.DrawCircleGradient((int)pos.X + 40, (int)pos.Y + 40, 320, new Color(Color.Orange.R, Color.Orange.G, Color.Orange.B, (byte)120), Color.Blank);
+                Raylib.EndBlendMode();
+                Raylib.BeginBlendMode(BlendMode.Additive);
+                Raylib.DrawCircleGradient((int)pos.X + 40, (int)pos.Y + 40, 320, new Color(Color.Orange.R, Color.Orange.G, Color.Orange.B, (byte)50), Color.Blank);
+                Raylib.EndBlendMode();
             }
         }
-        Raylib.EndBlendMode();
     }
 }

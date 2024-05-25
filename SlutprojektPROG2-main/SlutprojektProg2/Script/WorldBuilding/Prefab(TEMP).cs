@@ -1,10 +1,4 @@
-
-public abstract class Prefab : TilePref
-{
-
-}
-
-public sealed class Tree : Prefab
+public sealed class Tree : TilePref
 {
     private List<Texture2D> textures = new();
     private static Texture2D oakTexture;
@@ -35,7 +29,7 @@ public sealed class Tree : Prefab
     }
 }
 
-public sealed class Rock : Prefab
+public sealed class Rock : TilePref
 {
     private static Texture2D rockTexture;
     public Rock(Vector2 pos)
@@ -59,7 +53,7 @@ public sealed class Rock : Prefab
     }
 }
 
-public sealed class Torch : Prefab, ILightSource
+public sealed class Torch : TilePref, ILightSource
 {
     private static Texture2D torchTexture;
     public Animator animator;

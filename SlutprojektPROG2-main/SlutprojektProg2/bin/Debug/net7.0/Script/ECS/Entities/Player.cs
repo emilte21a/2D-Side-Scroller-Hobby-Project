@@ -53,16 +53,15 @@ public sealed class Player : Entity, IDrawable
 
         position = new Vector2(rectangle.X, rectangle.Y);
         physicsBody.UseGravity = PhysicsBody.Gravity.enabled;
-        collider.boxCollider = rectangle;
+        collider.boxCollider = new Rectangle(rectangle.X, rectangle.Y, rectangle.Width - 40, rectangle.Height - 20);
     }
-
 
     public override void Update()
     {
         if (playerState == PlayerState.inGame)
         {
-            collider.boxCollider.X = rectangle.X;
-            collider.boxCollider.Y = rectangle.Y;
+            collider.boxCollider.X = rectangle.X + 20;
+            collider.boxCollider.Y = rectangle.Y + 20;
 
             MovePlayer(physicsBody, _playerSpeed);
 
@@ -71,8 +70,8 @@ public sealed class Player : Entity, IDrawable
             if (Raylib.IsMouseButtonPressed(0))
                 playerAction.OnClick(position, (int)Raymath.Clamp(Raylib.GetScreenToWorld2D(Raylib.GetMousePosition(), Game.camera).X - position.X, -1, 1), inventory);
 
-            if (Raylib.IsKeyPressed(KeyboardKey.Space)) //&& physicsBody.airState == AirState.grounded)
-                physicsBody.Jump(physicsBody, 1000 * Raylib.GetFrameTime());
+            if (Raylib.IsKeyPressed(KeyboardKey.Space) && physicsBody.airState == AirState.grounded)
+                physicsBody.Jump(physicsBody, 12);
 
             if (Raylib.IsKeyPressed(KeyboardKey.H))
                 healthPoints = 100;
@@ -94,13 +93,12 @@ public sealed class Player : Entity, IDrawable
 
     public override void Draw()
     {
+        Vector2 newPos = new Vector2(position.X - 20, position.Y - 20);
         if (physicsBody.velocity.X != 0)
-            animator.PlayAnimation(spriteSheet, (int)InputManager.GetLastDirectionDelta(), 4, position);
+            animator.PlayAnimation(spriteSheet, (int)InputManager.GetLastDirectionDelta(), 4, newPos);
 
         else
-            Raylib.DrawTextureRec(renderer.sprite, new Rectangle(0, 0, renderer.sprite.Width * InputManager.GetLastDirectionDelta(), renderer.sprite.Height), position, Color.White);
-
-        Raylib.DrawRectangleRec(playerAction.handRectangle, Color.Red);
+            Raylib.DrawTextureRec(renderer.sprite, new Rectangle(0, 0, renderer.sprite.Width * InputManager.GetLastDirectionDelta(), renderer.sprite.Height), newPos, Color.White);
 
         if (inventory.currentActiveItem != null)
         {

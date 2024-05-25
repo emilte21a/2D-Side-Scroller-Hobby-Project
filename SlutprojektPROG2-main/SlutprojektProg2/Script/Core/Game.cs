@@ -50,13 +50,13 @@ public class Game
     {
         Raylib.InitWindow(ScreenWidth, ScreenHeight, "game");
         Raylib.SetExitKey(KeyboardKey.Null);
+        Raylib.SetConfigFlags(Raylib_cs.ConfigFlags.ResizableWindow);
         Raylib.InitAudioDevice();
         gameObjectsToDestroy = new List<GameObject>();
         InitializeInstances();
         lightingSystem.InstantiateLightMap(); // Måste köras efter initwindow
 
         // gameObjects = new ObservableCollection<GameObject>(WorldGeneration.gameObjectsInWorld);
-
 
         drawables = new List<IDrawable>();
         drawables.Add(worldGeneration);
@@ -95,7 +95,7 @@ public class Game
     {
         //SpawnManager.SpawnEntityAt(player, new Vector2(WorldGeneration.spawnPoints[100].X, WorldGeneration.spawnPoints[100].Y - player.collider.boxCollider.Height));
 
-        while (!Raylib.WindowShouldClose())
+        while (!Raylib.WindowShouldClose() && !shouldCloseGame)
         {
             Update();
             Draw();
@@ -107,6 +107,9 @@ public class Game
 
     private void Update()
     {
+        ScreenWidth = Raylib.GetScreenWidth();
+        ScreenHeight = Raylib.GetScreenHeight();
+
         if (sceneHandler.currentScene == SceneHandler.CurrentSceneState.Start)
         {
 
@@ -141,7 +144,7 @@ public class Game
                 {
                     TilePref currentTile = WorldGeneration.tilemap[posX, posY];
                     Console.WriteLine(currentTile);
-                    if (currentTile == null || currentTile.tag == "BackgroundTile")
+                    if ((currentTile == null || currentTile.tag == "BackgroundTile") && !Raylib.CheckCollisionPointRec(Raylib.GetScreenToWorld2D(Raylib.GetMousePosition(), camera), player.collider.boxCollider))
                     {
                         if (player.inventory.currentActiveItem is IPlaceable placeableItem)
                         {
@@ -169,7 +172,7 @@ public class Game
             System.Console.WriteLine("Gameover");
     }
 
-
+    bool shouldCloseGame = false;
 
     private void Draw()
     {
@@ -225,7 +228,7 @@ public class Game
                     paused = false;
 
                 if (close)
-                    Raylib.CloseWindow();
+                    shouldCloseGame = true;
             }
         }
         Raylib.EndDrawing();

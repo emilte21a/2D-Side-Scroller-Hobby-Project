@@ -1,6 +1,4 @@
-public abstract class Tile : TilePref { }
-
-public sealed class GrassTile : Tile
+public sealed class GrassTile : TilePref
 {
     static Texture2D grassTexture;
     public GrassTile(Vector2 pos)
@@ -22,7 +20,7 @@ public sealed class GrassTile : Tile
     }
 }
 
-public sealed class StoneTile : Tile
+public sealed class StoneTile : TilePref
 {
     static Texture2D stoneTexture;
 
@@ -45,7 +43,7 @@ public sealed class StoneTile : Tile
     }
 }
 
-public sealed class DirtTile : Tile
+public sealed class DirtTile : TilePref
 {
     static Texture2D dirtTexture;
 
@@ -69,7 +67,7 @@ public sealed class DirtTile : Tile
     }
 }
 
-public sealed class BackgroundTile : Tile
+public sealed class BackgroundTile : TilePref
 {
     static Texture2D backgroundTexture;
 
@@ -90,7 +88,7 @@ public sealed class BackgroundTile : Tile
     }
 }
 
-public sealed class CraftingTable : Tile
+public sealed class CraftingTable : TilePref
 {
     static Texture2D craftingTableTexture;
 

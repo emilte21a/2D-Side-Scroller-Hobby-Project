@@ -72,9 +72,11 @@ public class Inventory
                 itemPos = FindFirstEmptySlot();
 
         }
+        Rectangle inventoryRect = new Rectangle(Game.ScreenWidth / 2 - inventoryBackpack.GetLength(0) * 80 / 2 + 30, 190, inventoryBackpack.GetLength(0) * 80, inventoryBackpack.GetLength(1) * 80);
 
         if (_shouldShowInventory)
         {
+            Raylib.DrawRectangleRec(inventoryRect, Color.DarkPurple);
             for (int x = 0; x < inventoryBackpack.GetLength(0); x++)
             {
                 for (int y = 0; y < inventoryBackpack.GetLength(1); y++)
