@@ -16,7 +16,7 @@ public class DayNightSystem
 
     private float _rotation = 0f;
 
-    private ushort _timePerHour = 1;
+    private ushort _timePerHour = 10;
 
     public DayNightSystem()
     {

@@ -1,24 +1,14 @@
 public class ItemManager
 {
-    public static T EnumToItem<T>(Item itemType)
+    public static List<ItemEntity> itemsOnGround = new List<ItemEntity>();
+
+    public static void Draw()
     {
-        Type enumType = typeof(T);
-
-        T value = (T)Enum.ToObject(enumType, itemType);
-        if (Enum.IsDefined(enumType, value) == false)
+        for (int i = 0; i < itemsOnGround.Count; i++)
         {
-            throw new NotSupportedException("Unable to convert value from database to the type: " + enumType.ToString());
+            Raylib.DrawTextureV(itemsOnGround[i].texture, itemsOnGround[i].position, Color.White);
         }
-        return (T)value;
     }
-
-    // public Enum ItemToEnum(Item itemType)
-    // {
-
-    //     Enum @enum = Enum.TryParse(itemType.name, out ItemType)
-
-    //     itemTypes.Add(@enum);
-    // }
 }
 public enum ItemType
 {

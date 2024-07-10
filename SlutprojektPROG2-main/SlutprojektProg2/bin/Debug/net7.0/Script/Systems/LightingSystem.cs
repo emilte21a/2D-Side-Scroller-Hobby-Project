@@ -74,19 +74,14 @@ public class LightingSystem
         Raylib.SetTextureFilter(lightMapTexture.Texture, TextureFilter.Bilinear);
         Raylib.EndTextureMode();
         Raylib.UnloadImage(_lightMapImage);
+        Raylib.UnloadRenderTexture(lightMapTexture);
     }
 
     public void UpdateLightmap(Vector2 pos)
     {
         InitializeLightmap(WorldGeneration.tilemap);
-        _lightMapImage = CreateLightMapImage();
         Raylib.BeginTextureMode(lightMapTexture);
         Raylib.DrawCircleGradient((int)pos.X, (int)pos.Y, 100, new Color(255, 255, 255, 255), new Color(255, 255, 255, 0));
-        unsafe
-        {
-            Raylib.UpdateTexture(lightMapTexture.Texture, _lightMapImage.Data);
-        }
         Raylib.EndTextureMode();
-        Raylib.UnloadImage(_lightMapImage);
     }
 }

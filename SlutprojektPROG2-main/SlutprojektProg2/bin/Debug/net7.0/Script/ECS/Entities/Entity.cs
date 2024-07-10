@@ -2,7 +2,7 @@
 
 public abstract class Entity : GameObject
 {
-    protected Rectangle rectangle;
+    public Rectangle rectangle;
 
     public Vector2 lastDirection;
 

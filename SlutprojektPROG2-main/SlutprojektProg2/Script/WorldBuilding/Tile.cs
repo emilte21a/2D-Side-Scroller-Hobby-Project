@@ -88,7 +88,7 @@ public sealed class BackgroundTile : TilePref
     }
 }
 
-public sealed class CraftingTable : TilePref
+public sealed class CraftingTable : TilePref, IInteractable
 {
     static Texture2D craftingTableTexture;
 
@@ -100,11 +100,16 @@ public sealed class CraftingTable : TilePref
         rectangle = new Rectangle(0, 0, 80, 80);
         position = pos;
         if (craftingTableTexture.Id == 0)
-            craftingTableTexture = Raylib.LoadTexture("Images/CraftingTable.png");
+            craftingTableTexture = Raylib.LoadTexture("Images/craftingtable.png");
 
         renderer.sprite = craftingTableTexture;
         rectangle = new Rectangle(position.X, position.Y, renderer.sprite.Width, renderer.sprite.Height);
 
         HP = 100;
+    }
+
+    public void OnInteract()
+    {
+        
     }
 }

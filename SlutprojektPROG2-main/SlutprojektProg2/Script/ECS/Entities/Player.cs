@@ -41,7 +41,7 @@ public sealed class Player : Entity, IDrawable
         #endregion
 
         inventory.AddToInventory(new WoodPickaxe(), 1);
-        inventory.AddToInventory(new TorchItem(), 1);
+        inventory.AddToInventory(new CraftingTableItem(), 1);
 
         healthPoints = 100;
         tag = "Player";
@@ -56,8 +56,26 @@ public sealed class Player : Entity, IDrawable
         collider.boxCollider = new Rectangle(rectangle.X, rectangle.Y, rectangle.Width - 40, rectangle.Height - 20);
     }
 
+    TilePref collidingTile;
+
     public override void Update()
     {
+        for (int i = 0; i < WorldGeneration.gameObjectsThatShouldRender.Count; i++)
+        {
+            if (Raylib.CheckCollisionRecs(rectangle, WorldGeneration.gameObjectsThatShouldRender[i].rectangle) && WorldGeneration.gameObjectsThatShouldRender[i] != null)
+            {
+                collidingTile = WorldGeneration.gameObjectsThatShouldRender[i];
+            }
+        }
+
+        if (collidingTile is IInteractable interactable)
+        {
+            if (Raylib.IsKeyPressed(KeyboardKey.E))
+            {
+                interactable.OnInteract();
+            }
+        }
+
         if (playerState == PlayerState.inGame)
         {
             collider.boxCollider.X = rectangle.X + 20;
@@ -77,6 +95,24 @@ public sealed class Player : Entity, IDrawable
                 healthPoints = 100;
 
             playerAction.Update();
+
+            if (ItemManager.itemsOnGround.Count > 0)
+            {
+                for (int i = 0; i < ItemManager.itemsOnGround.Count; i++)
+                {
+                    if (Raylib.CheckCollisionRecs(rectangle, ItemManager.itemsOnGround[i].rectangle))
+                    {
+                        inventory.AddToInventory(ItemManager.itemsOnGround[i].itemDrop, ItemManager.itemsOnGround[i].itemDrop.dropAmount);
+
+                        Game.gameObjectsToDestroy.Add(ItemManager.itemsOnGround[i]);
+
+                        Game.entities.Remove(ItemManager.itemsOnGround[i]);
+                        ItemManager.itemsOnGround.Remove(ItemManager.itemsOnGround[i]);
+
+                    }
+                }
+            }
+
         }
         inventory.Update();
     }

@@ -1,8 +1,7 @@
-
+using System.Runtime.CompilerServices;
 
 public class Inventory
 {
-    public static Inventory current;
     public Dictionary<Item, int> itemsInInventory;
 
     private Slot[] inventoryHotbar;
@@ -30,69 +29,40 @@ public class Inventory
 
     public void Update()
     {
-        if (Raylib.IsKeyPressed(KeyboardKey.Tab) && !_shouldShowInventory)
-            _shouldShowInventory = true;
-
-        else if (Raylib.IsKeyPressed(KeyboardKey.Tab) && _shouldShowInventory)
-            _shouldShowInventory = false;
-
-        UpdateInventoryBackpack();
+        if (Raylib.IsKeyPressed(KeyboardKey.Tab))
+            _shouldShowInventory = !_shouldShowInventory;
 
         if (itemsInInventory.Count != 0)
-        {
-
             currentActiveItem = inventoryHotbar[CurrentItemIndex()].item;
-        }
+
         else
             currentActiveItem = null;
-    }
-
-
-    int itemPos = 0;
-    public void Draw()
-    {
-        Raylib.DrawTexture(_hotbarTexture, Game.ScreenWidth / 2 - _hotbarTexture.Width / 2, Game.ScreenHeight - 100, Color.White);
-
-        foreach (Slot slot in inventoryHotbar)
-        {
-            if (itemPos < inventoryHotbar.Length)
-            {
-                Raylib.DrawTexture(_itemChosenTexture, Game.ScreenWidth / 2 - _hotbarTexture.Width / 2 + 11 + CurrentItemIndex() * 58, Game.ScreenHeight - 89, Color.White);
-
-                if (slot.item != null && itemsInInventory.ContainsKey(slot.item))
-                {
-                    Raylib.DrawTexture(slot.item.texture, Game.ScreenWidth / 2 - _hotbarTexture.Width / 2 + 11 + 58 * slot.index, Game.ScreenHeight - 89, Color.White);
-                    Raylib.DrawText($"{itemsInInventory[slot.item]}", Game.ScreenWidth / 2 - _hotbarTexture.Width / 2 + 54 + 58 * slot.index, Game.ScreenHeight - 64, 10, Color.White);
-                }
-
-                itemPos++;
-            }
-
-            if (itemPos >= inventoryHotbar.Length)
-                itemPos = FindFirstEmptySlot();
-
-        }
-        Rectangle inventoryRect = new Rectangle(Game.ScreenWidth / 2 - inventoryBackpack.GetLength(0) * 80 / 2 + 30, 190, inventoryBackpack.GetLength(0) * 80, inventoryBackpack.GetLength(1) * 80);
 
         if (_shouldShowInventory)
+            UpdateSlots();
+
+        // Update hotbar slots
+        for (int i = 0; i < inventoryHotbar.Length; i++)
         {
-            Raylib.DrawRectangleRec(inventoryRect, Color.DarkPurple);
-            for (int x = 0; x < inventoryBackpack.GetLength(0); x++)
+            if (inventoryHotbar[i].item != null)
             {
-                for (int y = 0; y < inventoryBackpack.GetLength(1); y++)
-                {
-                    Raylib.DrawTexture(_itemFrameTexture, x * 80 + Game.ScreenWidth / 2 - inventoryBackpack.GetLength(0) * 80 / 2 + 40, y * 80 + 200, Color.White);
-                    if (inventoryBackpack[x, y].item != null)
-                    {
-                        Raylib.DrawTexture(inventoryBackpack[x, y].item.texture, x * 80 + 305, y * 80 + 100, Color.White);
-                        Raylib.DrawText($"{itemsInInventory[inventoryBackpack[x, y].item]}", 305 + 80 + 80 * x, 100 + 80 + 80 * y, 10, Color.White);
-                    }
-                }
+                inventoryHotbar[i].Count = (ushort)itemsInInventory[inventoryHotbar[i].item];
+            }
+
+            if (Raylib.CheckCollisionPointRec(Raylib.GetMousePosition(), new Rectangle(inventoryHotbar[i].position.X, inventoryHotbar[i].position.Y, 62, 62)))
+            {
+                inventoryHotbar[i].slotColor = Color.Gray;
+            }
+            else if (activeitemIndex == i)
+                inventoryHotbar[i].slotColor = Color.Gold;
+            else
+            {
+                inventoryHotbar[i].slotColor = Color.Black;
             }
         }
     }
 
-    int activeitemIndex;
+    private int activeitemIndex;
     public int CurrentItemIndex()
     {
         KeyboardKey keyPressed = (KeyboardKey)Raylib.GetKeyPressed();
@@ -118,29 +88,310 @@ public class Inventory
         return activeitemIndex;
     }
 
+    public void Draw()
+    {
+        for (int i = 0; i < inventoryHotbar.Length; i++)
+        {
+            Vector2 slotPosition = new Vector2(i * 80 + Game.ScreenWidth / 2 - inventoryHotbar.Length * 80 / 2 + 40, Game.ScreenHeight - 100);
+            inventoryHotbar[i].position = slotPosition;
+            Raylib.DrawRectangleV(slotPosition, new Vector2(62, 62), inventoryHotbar[i].slotColor);
+
+            if (inventoryHotbar[i].item != null && !inventoryHotbar[i].isDragging)
+            {
+                Raylib.DrawTextureV(inventoryHotbar[i].item.texture, slotPosition, Color.White);
+                Raylib.DrawText($"{inventoryHotbar[i].Count}", (int)(slotPosition.X + 30), (int)(slotPosition.Y + 30), 10, Color.White);
+            }
+
+            if (inventoryHotbar[i].index >= inventoryHotbar.Length)
+                inventoryHotbar[i].index = (ushort)FindFirstEmptySlot();
+        }
+
+        if (_shouldShowInventory)
+        {
+            Rectangle inventoryRect = new Rectangle(Game.ScreenWidth / 2 - inventoryBackpack.GetLength(0) * 80 / 2 + 30, 190, inventoryBackpack.GetLength(0) * 80, inventoryBackpack.GetLength(1) * 80);
+            Raylib.DrawRectangleRec(inventoryRect, Color.DarkPurple);
+            DrawSlots();
+        }
+    }
+
+
+
+    private void DrawSlots()
+    {
+        // Draw backpack slots
+        for (int x = 0; x < inventoryBackpack.GetLength(0); x++)
+        {
+            for (int y = 0; y < inventoryBackpack.GetLength(1); y++)
+            {
+                Vector2 slotPosition = new Vector2(x * 80 + Game.ScreenWidth / 2 - inventoryBackpack.GetLength(0) * 80 / 2 + 40, y * 80 + 200);
+                inventoryBackpack[x, y].position = slotPosition;
+                Raylib.DrawRectangleV(slotPosition, new Vector2(62, 62), inventoryBackpack[x, y].slotColor);
+
+                if (inventoryBackpack[x, y].item != null && !inventoryBackpack[x, y].isDragging)
+                {
+                    Raylib.DrawTextureV(inventoryBackpack[x, y].item.texture, slotPosition, Color.White);
+                    Raylib.DrawText($"{inventoryBackpack[x, y].Count}", (int)(slotPosition.X + 30), (int)(slotPosition.Y + 30), 10, Color.White);
+                }
+            }
+        }
+
+        // // Draw hotbar slots
+        // for (int i = 0; i < inventoryHotbar.Length; i++)
+        // {
+        //     Vector2 slotPosition = new Vector2(i * 80 + Game.ScreenWidth / 2 - inventoryHotbar.Length * 80 / 2 + 40, Game.ScreenHeight - 100);
+        //     inventoryHotbar[i].position = slotPosition;
+        //     Raylib.DrawRectangleV(slotPosition, new Vector2(62, 62), inventoryHotbar[i].slotColor);
+
+        //     if (inventoryHotbar[i].item != null && !inventoryHotbar[i].isDragging)
+        //     {
+        //         Raylib.DrawTextureV(inventoryHotbar[i].item.texture, slotPosition, Color.White);
+        //         Raylib.DrawText($"{inventoryHotbar[i].Count}", (int)(slotPosition.X + 30), (int)(slotPosition.Y + 30), 10, Color.White);
+        //     }
+        // }
+
+        // Draw dragging items on top
+        for (int x = 0; x < inventoryBackpack.GetLength(0); x++)
+        {
+            for (int y = 0; y < inventoryBackpack.GetLength(1); y++)
+            {
+                if (inventoryBackpack[x, y].isDragging)
+                {
+                    Vector2 dragPosition = new Vector2(inventoryBackpack[x, y].position.X, inventoryBackpack[x, y].position.Y);
+                    Raylib.DrawTextureV(inventoryBackpack[x, y].item.texture, dragPosition, Color.White);
+                    Raylib.DrawText($"{inventoryBackpack[x, y].Count}", (int)(dragPosition.X + 30), (int)(dragPosition.Y + 30), 10, Color.White);
+                }
+            }
+        }
+
+        for (int i = 0; i < inventoryHotbar.Length; i++)
+        {
+            if (inventoryHotbar[i].isDragging)
+            {
+                Vector2 dragPosition = new Vector2(inventoryHotbar[i].position.X, inventoryHotbar[i].position.Y);
+                Raylib.DrawTextureV(inventoryHotbar[i].item.texture, dragPosition, Color.White);
+                Raylib.DrawText($"{inventoryHotbar[i].Count}", (int)(dragPosition.X + 30), (int)(dragPosition.Y + 30), 10, Color.White);
+            }
+        }
+    }
+
+    private void UpdateSlots()
+    {
+        Vector2 mousePos = Raylib.GetMousePosition();
+
+        // Update backpack slots
+        for (int x = 0; x < inventoryBackpack.GetLength(0); x++)
+        {
+            for (int y = 0; y < inventoryBackpack.GetLength(1); y++)
+            {
+                if (inventoryBackpack[x, y].item != null)
+                {
+                    inventoryBackpack[x, y].Count = (ushort)itemsInInventory[inventoryBackpack[x, y].item];
+                }
+
+                if (Raylib.CheckCollisionPointRec(mousePos, new Rectangle(inventoryBackpack[x, y].position.X, inventoryBackpack[x, y].position.Y, 62, 62)))
+                {
+                    inventoryBackpack[x, y].slotColor = Color.Gray;
+                }
+                else
+                {
+                    inventoryBackpack[x, y].slotColor = Color.Black;
+                }
+            }
+        }
+
+
+
+        // Handle dragging start
+        if (Raylib.IsMouseButtonPressed(MouseButton.Left))
+        {
+            for (int x = 0; x < inventoryBackpack.GetLength(0); x++)
+            {
+                for (int y = 0; y < inventoryBackpack.GetLength(1); y++)
+                {
+                    if (Raylib.CheckCollisionPointRec(mousePos, new Rectangle(inventoryBackpack[x, y].position.X, inventoryBackpack[x, y].position.Y, 62, 62)))
+                    {
+                        inventoryBackpack[x, y].isDragging = true;
+                        inventoryBackpack[x, y].dragOffset = new Vector2(mousePos.X - inventoryBackpack[x, y].position.X, mousePos.Y - inventoryBackpack[x, y].position.Y);
+                        break;
+                    }
+                }
+            }
+
+            for (int i = 0; i < inventoryHotbar.Length; i++)
+            {
+                if (Raylib.CheckCollisionPointRec(mousePos, new Rectangle(inventoryHotbar[i].position.X, inventoryHotbar[i].position.Y, 62, 62)))
+                {
+                    inventoryHotbar[i].isDragging = true;
+                    inventoryHotbar[i].dragOffset = new Vector2(mousePos.X - inventoryHotbar[i].position.X, mousePos.Y - inventoryHotbar[i].position.Y);
+                    break;
+                }
+            }
+        }
+
+        // Handle dragging end
+        if (Raylib.IsMouseButtonReleased(MouseButton.Left))
+        {
+            // Check backpack slots
+            for (int x = 0; x < inventoryBackpack.GetLength(0); x++)
+            {
+                for (int y = 0; y < inventoryBackpack.GetLength(1); y++)
+                {
+                    if (inventoryBackpack[x, y].isDragging)
+                    {
+                        bool swapped = false;
+
+                        // Snap to backpack slots
+                        for (int nx = 0; nx < inventoryBackpack.GetLength(0); nx++)
+                        {
+                            for (int ny = 0; ny < inventoryBackpack.GetLength(1); ny++)
+                            {
+                                if (Raylib.CheckCollisionPointRec(mousePos, new Rectangle(inventoryBackpack[nx, ny].position.X, inventoryBackpack[nx, ny].position.Y, 62, 62)))
+                                {
+                                    SwapSlots(ref inventoryBackpack[x, y], ref inventoryBackpack[nx, ny]);
+                                    swapped = true;
+                                    break;
+                                }
+                            }
+                            if (swapped) break;
+                        }
+
+                        // Snap to hotbar slots
+                        if (!swapped)
+                        {
+                            for (int ni = 0; ni < inventoryHotbar.Length; ni++)
+                            {
+                                if (Raylib.CheckCollisionPointRec(mousePos, new Rectangle(inventoryHotbar[ni].position.X, inventoryHotbar[ni].position.Y, 62, 62)))
+                                {
+                                    SwapSlots(ref inventoryBackpack[x, y], ref inventoryHotbar[ni]);
+                                    swapped = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        inventoryBackpack[x, y].isDragging = false;
+                    }
+                }
+            }
+
+            // Check hotbar slots
+            for (int i = 0; i < inventoryHotbar.Length; i++)
+            {
+                if (inventoryHotbar[i].isDragging)
+                {
+                    bool swapped = false;
+
+                    // Snap to hotbar slots
+                    for (int ni = 0; ni < inventoryHotbar.Length; ni++)
+                    {
+                        if (Raylib.CheckCollisionPointRec(mousePos, new Rectangle(inventoryHotbar[ni].position.X, inventoryHotbar[ni].position.Y, 62, 62)))
+                        {
+                            SwapSlots(ref inventoryHotbar[i], ref inventoryHotbar[ni]);
+                            swapped = true;
+                            break;
+                        }
+                    }
+
+                    // Snap to backpack slots
+                    if (!swapped)
+                    {
+                        for (int nx = 0; nx < inventoryBackpack.GetLength(0); nx++)
+                        {
+                            for (int ny = 0; ny < inventoryBackpack.GetLength(1); ny++)
+                            {
+                                if (Raylib.CheckCollisionPointRec(mousePos, new Rectangle(inventoryBackpack[nx, ny].position.X, inventoryBackpack[nx, ny].position.Y, 62, 62)))
+                                {
+                                    SwapSlots(ref inventoryHotbar[i], ref inventoryBackpack[nx, ny]);
+                                    swapped = true;
+                                    break;
+                                }
+                            }
+                            if (swapped) break;
+                        }
+                    }
+
+                    inventoryHotbar[i].isDragging = false;
+                }
+            }
+        }
+
+        // Handle dragging move
+        if (Raylib.IsMouseButtonDown(MouseButton.Left))
+        {
+            for (int x = 0; x < inventoryBackpack.GetLength(0); x++)
+            {
+                for (int y = 0; y < inventoryBackpack.GetLength(1); y++)
+                {
+                    if (inventoryBackpack[x, y].isDragging)
+                    {
+                        inventoryBackpack[x, y].position.X = mousePos.X - inventoryBackpack[x, y].dragOffset.X;
+                        inventoryBackpack[x, y].position.Y = mousePos.Y - inventoryBackpack[x, y].dragOffset.Y;
+                    }
+                }
+            }
+
+            for (int i = 0; i < inventoryHotbar.Length; i++)
+            {
+                if (inventoryHotbar[i].isDragging)
+                {
+                    inventoryHotbar[i].position.X = mousePos.X - inventoryHotbar[i].dragOffset.X;
+                    inventoryHotbar[i].position.Y = mousePos.Y - inventoryHotbar[i].dragOffset.Y;
+                }
+            }
+        }
+    }
+
+    private void SwapSlots(ref Slot slot1, ref Slot slot2)
+    {
+        Slot temp = slot1;
+        slot1 = slot2;
+        slot2 = temp;
+
+        // Snap the items to the center of the slots
+        slot1.SnapPosition();
+        slot2.SnapPosition();
+    }
+
     public void AddToInventory(Item item, int quantity)
     {
-        bool x = itemsInInventory.Keys.Any(k => k.ID.Equals(item.ID));
+        bool itemAlreadyExistsInInventory = itemsInInventory.Keys.Any(k => k.ID.Equals(item.ID));
 
-        if (x && item.stackable)
+        if (itemAlreadyExistsInInventory && item.stackable)
         {
-            foreach (var kvp in itemsInInventory)
+            foreach (KeyValuePair<Item, int> kvp in itemsInInventory)
             {
                 if (item.ID.Equals(kvp.Key.ID))
                 {
                     itemsInInventory[kvp.Key] += quantity;
                 }
+                continue;
             }
         }
+        else if (item.stackable && !itemAlreadyExistsInInventory)
+            itemsInInventory[item] = quantity;
+
         else
-            itemsInInventory[item] = 1;
+            itemsInInventory.Add(item, 1);
+
 
         if (itemsInInventory.Count <= inventoryHotbar.Length)
         {
             int emptySlotIndex = FindFirstEmptySlot();
-            if (emptySlotIndex != -1)
-                inventoryHotbar[emptySlotIndex] = new Slot(item, emptySlotIndex);
+            if (emptySlotIndex != -1 && (!itemAlreadyExistsInInventory || !item.stackable))
+            {
+                inventoryHotbar[emptySlotIndex] = new Slot(item);
+                inventoryHotbar[emptySlotIndex].index = (ushort)emptySlotIndex;
+            }
+        }
 
+        else
+        {
+            Vector2 emptySlotIndex = FindFirstEmptySlotBackpack();
+            if (emptySlotIndex != -Vector2.One && (!itemAlreadyExistsInInventory || !item.stackable))
+            {
+                inventoryBackpack[(int)emptySlotIndex.X, (int)emptySlotIndex.Y] = new Slot(item);
+                inventoryBackpack[(int)emptySlotIndex.X, (int)emptySlotIndex.Y].Count = (ushort)itemsInInventory[item];
+            }
         }
     }
 
@@ -165,7 +416,6 @@ public class Inventory
 
     public bool CanCraft(Item item)
     {
-
         foreach (KeyValuePair<Item, int> ingredient in item.recipe)
         {
             if (!itemsInInventory.ContainsKey(ingredient.Key) || itemsInInventory[ingredient.Key] < ingredient.Value)
@@ -193,42 +443,66 @@ public class Inventory
         }
     }
 
-    private void UpdateInventoryBackpack()
+    private Vector2 FindFirstEmptySlotBackpack()
     {
-        for (int i = 0; i < itemsInInventory.Count; i++)
+        for (int x = 0; x < inventoryBackpack.GetLength(1); x++)
         {
-            if (i < inventoryHotbar.Length)
-                continue;
-
-
-            if (xIndex >= inventoryBackpack.GetLength(0))
+            for (int y = 0; y < inventoryBackpack.GetLength(0); y++)
             {
-                xIndex = 0;
-                yIndex++;
-
-
-                if (yIndex >= inventoryBackpack.GetLength(1))
-                    break;
+                if (inventoryBackpack[y, x].item == null)
+                    return new Vector2(y, x);
             }
+        }
+        return -Vector2.One;
+    }
 
-            inventoryBackpack[xIndex, yIndex].item = itemsInInventory.Keys.ElementAt(i);
-
-            xIndex++;
+    public Slot? GetSlotAtPosition(Vector2 position)
+    {
+        for (int i = 0; i < inventoryHotbar.Length; i++)
+        {
+            if (Raylib.CheckCollisionPointRec(position, new Rectangle(inventoryHotbar[i].position.X, inventoryHotbar[i].position.Y, 62, 62)))
+            {
+                return inventoryHotbar[i];
+            }
         }
 
-        xIndex = 0;
-        yIndex = 0;
+        for (int x = 0; x < inventoryBackpack.GetLength(0); x++)
+        {
+            for (int y = 0; y < inventoryBackpack.GetLength(1); y++)
+            {
+                if (Raylib.CheckCollisionPointRec(position, new Rectangle(inventoryBackpack[x, y].position.X, inventoryBackpack[x, y].position.Y, 62, 62)))
+                {
+                    return inventoryBackpack[x, y];
+                }
+            }
+        }
+        return null;
     }
 }
 
 public struct Slot
 {
+    public Color slotColor = Color.Black;
+    public bool isDragging { get; set; }
+    public Vector2 dragOffset { get; set; }
+    public Rectangle rectangle = new Rectangle(0, 0, 62, 62);
     public Vector2 position;
-    public int index;
+    public ushort Count;
+    public ushort index;
     public Item item;
-    public Slot(Item item1, int slotIndex)
+
+    public Slot(Item item1)
     {
-        this.item = item1;
-        this.index = slotIndex;
+        item = item1;
+        isDragging = false;
+        dragOffset = Vector2.Zero;
+        position = Vector2.Zero;
+    }
+
+    public void SnapPosition()
+    {
+        // Snap to the center of the slot
+        position.X = (int)(position.X / 80) * 80 + 40;
+        position.Y = (int)(position.Y / 80) * 80 + 200;
     }
 }

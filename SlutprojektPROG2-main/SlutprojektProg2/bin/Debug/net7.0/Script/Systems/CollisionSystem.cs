@@ -21,7 +21,6 @@ public class CollisionSystem : GameSystem
 
             if (collider != null && physicsBody != null) //Kolla så att entityns physicsbody och collider inte är null
             {
-
                 tilesCloseToEntity = WorldGeneration.gameObjectsInWorld.Where(tile => Raylib.CheckCollisionRecs(ScreenRectangle, tile.rectangle)).ToList();
                 floorCollision = WorldGeneration.gameObjectsInWorld.Where(tile => Raylib.CheckCollisionRecs(tile.rectangle, floorCollider) && tile.tag == "Tile").ToList();
 
@@ -46,7 +45,7 @@ public class CollisionSystem : GameSystem
                     //Räkna ut spelarens y-position i nästa frame med en rektangel
                     Rectangle nextBounds = new Rectangle(e.position.X, e.position.Y + physicsBody.velocity.Y, collider.boxCollider.Width, collider.boxCollider.Height);
                     Rectangle collisionRectangle = Raylib.GetCollisionRec(tilePref.rectangle, nextBounds);
-
+                    
                     if (collisionRectangle.Width > collisionRectangle.Height && tilePref.tag == "Tile")
                     {
                         if (physicsBody.velocity.Y > 0 || e.lastDirection.Y == 1)
@@ -92,14 +91,4 @@ public class CollisionSystem : GameSystem
             }
         }
     }
-
-    //Metod som returnerar den största rektangeln ur listan med de rektanglar som en entity kolliderar med 
-    private Rectangle LargestCollisionRectangle(List<Tile> tiles, Rectangle entityRect)
-    {
-        List<Tile> order = tiles.OrderByDescending(t => t.rectangle.Width).ThenBy(t => t.rectangle.Height).ToList();
-
-        return Raylib.GetCollisionRec(entityRect, order[0].rectangle);
-    }
-
-
 }

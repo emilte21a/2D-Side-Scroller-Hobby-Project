@@ -1,4 +1,3 @@
-
 public abstract class Component { }
 
 public class PhysicsBody : Component

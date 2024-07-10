@@ -165,7 +165,7 @@ public sealed class StoneAxe : Item
     }
 }
 
-public sealed class CraftingTableItem : Item
+public sealed class CraftingTableItem : Item, IPlaceable
 {
     static Texture2D tex;
 
@@ -182,6 +182,11 @@ public sealed class CraftingTableItem : Item
 
         texture = tex;
         recipe = new() { { new WoodItem(), 4 } };
+    }
+
+    public TilePref TilePrefToPlace(Vector2 pos)
+    {
+        return new CraftingTable(pos);
     }
 }
 

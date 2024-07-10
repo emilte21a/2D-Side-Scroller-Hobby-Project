@@ -183,3 +183,6 @@ C:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\Slutpro
 C:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\SlutprojektProg2\obj\Debug\net7.0\Slutproj.BFF5A926.Up2Date
 C:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\SlutprojektProg2\obj\Debug\net7.0\SlutprojektProg2.sourcelink.json
 C:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\SlutprojektProg2\bin\Debug\net7.0\Images\torchAnimation.png
+C:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\SlutprojektProg2\bin\Debug\net7.0\Script\IInteractable.cs
+C:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\SlutprojektProg2\bin\Debug\net7.0\Script\Core\Config.cs
+C:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\SlutprojektProg2\bin\Debug\net7.0\Script\ECS\Entities\ItemEntity.cs

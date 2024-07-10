@@ -4,9 +4,6 @@ global using System.Collections.Generic;
 global using System.Collections.Concurrent;
 global using System.Linq;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
-using System.Security.Cryptography.X509Certificates;
-using System.Collections.Specialized;
 using Raylib_CsLo;
 using Raylib = Raylib_cs.Raylib;
 using Color = Raylib_cs.Color;
@@ -116,7 +113,7 @@ public class Game
         }
         else if (sceneHandler.currentScene == SceneHandler.CurrentSceneState.Game && !paused)
         {
-            lightingSystem.UpdateLightmap(player.position);
+            // lightingSystem.InstantiateLightMap();
             updateDayNightCycle = new Task(dayNightSystem.Update);
             updateDayNightCycle.Start();
 
@@ -133,7 +130,7 @@ public class Game
             camera.Target = Raymath.Vector2Lerp(camera.Target, player.position, 0.6f);
             parallaxManager.Update(player);
 
-            if (Raylib.IsMouseButtonPressed(Raylib_cs.MouseButton.Right) && player.inventory.currentActiveItem is IPlaceable && player.inventory.currentActiveItem != null)
+            if (Raylib.IsMouseButtonPressed(Raylib_cs.MouseButton.Right) && player.inventory.currentActiveItem is IPlaceable placeableItem && player.inventory.currentActiveItem != null)
             {
                 Vector2 pos = PlacementSystem.WorldToTile(Raylib.GetScreenToWorld2D(Raylib.GetMousePosition(), camera), 80);
 
@@ -146,12 +143,9 @@ public class Game
                     Console.WriteLine(currentTile);
                     if ((currentTile == null || currentTile.tag == "BackgroundTile") && !Raylib.CheckCollisionPointRec(Raylib.GetScreenToWorld2D(Raylib.GetMousePosition(), camera), player.collider.boxCollider))
                     {
-                        if (player.inventory.currentActiveItem is IPlaceable placeableItem)
-                        {
-                            TilePref tile = placeableItem.TilePrefToPlace(pos * 80);
-                            worldGeneration.SpawnTilePrefab(tile);
-                            WorldGeneration.tilemap[posX, posY] = tile;
-                        }
+                        TilePref tile = placeableItem.TilePrefToPlace(pos * 80);
+                        worldGeneration.SpawnTilePrefab(tile);
+                        WorldGeneration.tilemap[posX, posY] = tile;
                     }
                 }
             }
@@ -160,12 +154,6 @@ public class Game
             {
                 WorldGeneration.gameObjectsInWorld.Clear();
                 worldGeneration.GenerateWorld();
-            }
-
-            if (Raylib.IsKeyPressed(KeyboardKey.Down))
-            {
-                System.Console.WriteLine("");
-                System.Console.WriteLine(GC.GetTotalMemory(true));
             }
         }
         else if (sceneHandler.currentScene == SceneHandler.CurrentSceneState.Gameover)
@@ -180,21 +168,22 @@ public class Game
         Raylib.ClearBackground(Color.SkyBlue);
         if (sceneHandler.currentScene == SceneHandler.CurrentSceneState.Start)
         {
-            bool pressed = RayGui.GuiButton(new Raylib_CsLo.Rectangle(ScreenWidth / 2 - 100, ScreenHeight / 2 - 40, 200, 80), "Press to play");
-            RayGui.GuiTextInputBox(new Raylib_CsLo.Rectangle(ScreenWidth / 2 - 100, ScreenHeight / 2 - 40 + 400, 200, 80), "Input seed", $"{Raylib.GetKeyPressed()}", "", "", 15);
+            bool pressed = RayGui.GuiButton(new Raylib_CsLo.Rectangle(ScreenWidth / 2 - 100, ScreenHeight / 2 - 40, 200, 80), "Play");
 
+            bool exitGame = RayGui.GuiButton(new Raylib_CsLo.Rectangle(ScreenWidth / 2 - 100, ScreenHeight / 2 - 40 + 120, 200, 80), "Exit");
 
+            if (exitGame) shouldCloseGame = true;
 
             if (pressed) sceneHandler.ChangeScene(SceneHandler.CurrentSceneState.Game);
         }
 
         else if (sceneHandler.currentScene == SceneHandler.CurrentSceneState.Game)
         {
-
             dayNightSystem.Draw();
             parallaxManager.Draw();
             Raylib.BeginMode2D(camera);
             drawables.ForEach(d => d.Draw());
+            ItemManager.Draw();
             Raylib.DrawTextureEx(lightingSystem.lightMapTexture.Texture, new Vector2(0, 0), 0, 80, Color.White);
             // entities.ForEach(e => Raylib.DrawRectangleRec(e.GetComponent<Collider>().boxCollider, new Color(0, 255, 50, 100)));
             Raylib.EndMode2D();

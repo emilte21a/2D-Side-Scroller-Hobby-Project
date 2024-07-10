@@ -221,13 +221,13 @@ public class WorldGeneration : IDrawable
 
 public class Chunk
 {
-    public Tile[,] tilesInChunk { get; private set; }
+    public TilePref[,] tilesInChunk { get; private set; }
     public Vector2 position { get; private set; }
 
     public Chunk(Vector2 pos, int xSize, int ySize)
     {
         position = pos;
-        tilesInChunk = new Tile[xSize, ySize];
+        tilesInChunk = new TilePref[xSize, ySize];
     }
 }
 

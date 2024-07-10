@@ -66,15 +66,23 @@ public class PlayerAction
         {
             TilePref GO = WorldGeneration.gameObjectsThatShouldRender.Find(g => Raylib.CheckCollisionPointRec(position, g.rectangle) && g.tag != "BackgroundTile");
 
-            if (GO != null)
+            if (GO != null && inventory.currentActiveItem != null)
             {
                 Item item = GO.dropType;
 
                 GO.HP -= inventory.currentActiveItem.itemDamage;
-                
+
                 if (GO.HP <= 0)
                 {
-                    inventory.AddToInventory(item, item.dropAmount);
+                    //inventory.AddToInventory(item, item.dropAmount);
+                    if (item != null)
+                    {
+                        Vector2 itemPos = GO.position + new Vector2(item.texture.Width / 2, item.texture.Height / 2);
+                        ItemEntity itemEntity = new ItemEntity(itemPos, item);
+                        ItemManager.itemsOnGround.Add(itemEntity);
+                        Game.entities.Add(itemEntity);
+                    }
+
                     Game.gameObjectsToDestroy.Add(GO);
                     WorldGeneration.gameObjectsInWorld.Remove(GO);
                     WorldGeneration.tilemap[(int)position.X / 80, (int)position.Y / 80] = null;
