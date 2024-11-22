@@ -42,6 +42,7 @@ public sealed class Player : Entity, IDrawable
 
         inventory.AddToInventory(new WoodPickaxe(), 1);
         inventory.AddToInventory(new CraftingTableItem(), 1);
+        inventory.AddToInventory(new TorchItem(), 1);
 
         healthPoints = 100;
         tag = "Player";

@@ -52,7 +52,7 @@ public class ParallaxManager
     {
         parallaxLayers.ForEach(p => Raylib.DrawTextureRec(p.texture, p.rectangle, p.position, p.color));
         Raylib.DrawTextureRec(cloudsTexture, new Rectangle(scroll, 0, cloudsTexture.Width * 10, cloudsTexture.Height), new Vector2(0, 50), Color.White);
-        Raylib.DrawTextureRec(treelayer.texture, treelayer.rectangle, treelayer.position, Color.White);
+        //Raylib.DrawTextureRec(treelayer.texture, treelayer.rectangle, treelayer.position, Color.White);
     }
 
 }

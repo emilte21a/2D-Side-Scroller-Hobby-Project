@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\macho\\Downloads\\SlutprojektPROG2-main (1)\\SlutprojektPROG2-main\\SlutprojektProg2\\SlutprojektProg2.csproj": {}
+    "c:\\Users\\macho\\Downloads\\SlutprojektPROG2-main (1)\\SlutprojektPROG2-main\\SlutprojektProg2\\SlutprojektProg2.csproj": {}
   },
   "projects": {
-    "C:\\Users\\macho\\Downloads\\SlutprojektPROG2-main (1)\\SlutprojektPROG2-main\\SlutprojektProg2\\SlutprojektProg2.csproj": {
+    "c:\\Users\\macho\\Downloads\\SlutprojektPROG2-main (1)\\SlutprojektPROG2-main\\SlutprojektProg2\\SlutprojektProg2.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\macho\\Downloads\\SlutprojektPROG2-main (1)\\SlutprojektPROG2-main\\SlutprojektProg2\\SlutprojektProg2.csproj",
+        "projectUniqueName": "c:\\Users\\macho\\Downloads\\SlutprojektPROG2-main (1)\\SlutprojektPROG2-main\\SlutprojektProg2\\SlutprojektProg2.csproj",
         "projectName": "SlutprojektProg2",
-        "projectPath": "C:\\Users\\macho\\Downloads\\SlutprojektPROG2-main (1)\\SlutprojektPROG2-main\\SlutprojektProg2\\SlutprojektProg2.csproj",
+        "projectPath": "c:\\Users\\macho\\Downloads\\SlutprojektPROG2-main (1)\\SlutprojektPROG2-main\\SlutprojektProg2\\SlutprojektProg2.csproj",
         "packagesPath": "C:\\Users\\macho\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\macho\\Downloads\\SlutprojektPROG2-main (1)\\SlutprojektPROG2-main\\SlutprojektProg2\\obj\\",
+        "outputPath": "c:\\Users\\macho\\Downloads\\SlutprojektPROG2-main (1)\\SlutprojektPROG2-main\\SlutprojektProg2\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\macho\\AppData\\Roaming\\NuGet\\NuGet.Config"

@@ -29,6 +29,8 @@ public class Inventory
 
     public void Update()
     {
+
+
         if (Raylib.IsKeyPressed(KeyboardKey.Tab))
             _shouldShowInventory = !_shouldShowInventory;
 
@@ -60,6 +62,18 @@ public class Inventory
                 inventoryHotbar[i].slotColor = Color.Black;
             }
         }
+
+        for (int i = 0; i < itemsInInventory.Count; i++)
+        {
+            var itemAtIndex = itemsInInventory.ElementAt(i);
+            if (itemAtIndex.Value == 0)
+            {
+                inventoryHotbar[i].item = null;
+                RemoveFromInventory(itemAtIndex.Key);
+                break;
+            }
+        }
+
     }
 
     private int activeitemIndex;
@@ -156,7 +170,7 @@ public class Inventory
             {
                 if (inventoryBackpack[x, y].isDragging)
                 {
-                    Vector2 dragPosition = new Vector2(inventoryBackpack[x, y].position.X, inventoryBackpack[x, y].position.Y);
+                    Vector2 dragPosition = Raylib.GetMousePosition() - inventoryBackpack[x, y].dragOffset;
                     Raylib.DrawTextureV(inventoryBackpack[x, y].item.texture, dragPosition, Color.White);
                     Raylib.DrawText($"{inventoryBackpack[x, y].Count}", (int)(dragPosition.X + 30), (int)(dragPosition.Y + 30), 10, Color.White);
                 }
@@ -167,7 +181,7 @@ public class Inventory
         {
             if (inventoryHotbar[i].isDragging)
             {
-                Vector2 dragPosition = new Vector2(inventoryHotbar[i].position.X, inventoryHotbar[i].position.Y);
+                Vector2 dragPosition = Raylib.GetMousePosition() - inventoryHotbar[i].dragOffset;
                 Raylib.DrawTextureV(inventoryHotbar[i].item.texture, dragPosition, Color.White);
                 Raylib.DrawText($"{inventoryHotbar[i].Count}", (int)(dragPosition.X + 30), (int)(dragPosition.Y + 30), 10, Color.White);
             }

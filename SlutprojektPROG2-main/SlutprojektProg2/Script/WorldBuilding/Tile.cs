@@ -110,6 +110,9 @@ public sealed class CraftingTable : TilePref, IInteractable
 
     public void OnInteract()
     {
-        
+        if (!Game.shouldShowCraftingInterface) Game.shouldShowCraftingInterface = true;
+
+        else if (Game.shouldShowCraftingInterface) Game.shouldShowCraftingInterface = false;
+
     }
 }

@@ -96,10 +96,6 @@ C:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\Slutpro
 C:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\SlutprojektProg2\bin\Debug\net7.0\Images\DirtTile.png
 C:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\SlutprojektProg2\bin\Debug\net7.0\Images\grassTexture.png
 C:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\SlutprojektProg2\bin\Debug\net7.0\Images\GrassTile.png
-C:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\SlutprojektProg2\bin\Debug\net7.0\Images\Hotbar.png
-C:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\SlutprojektProg2\bin\Debug\net7.0\Images\InventoryTexture.png
-C:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\SlutprojektProg2\bin\Debug\net7.0\Images\itemChosen.png
-C:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\SlutprojektProg2\bin\Debug\net7.0\Images\itemFrame.png
 C:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\SlutprojektProg2\bin\Debug\net7.0\Images\moonSprite.png
 C:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\SlutprojektProg2\bin\Debug\net7.0\Images\mountains.png
 C:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\SlutprojektProg2\bin\Debug\net7.0\Images\oakTree.png
@@ -140,7 +136,6 @@ C:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\Slutpro
 C:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\SlutprojektProg2\bin\Debug\net7.0\Script\SceneHandler.cs
 C:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\SlutprojektProg2\bin\Debug\net7.0\Script\Systems\AudioSystem.cs
 C:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\SlutprojektProg2\bin\Debug\net7.0\Script\Systems\CollisionSystem.cs
-C:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\SlutprojektProg2\bin\Debug\net7.0\Script\Systems\CraftingSystem.cs
 C:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\SlutprojektProg2\bin\Debug\net7.0\Script\Systems\GameSystem.cs
 C:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\SlutprojektProg2\bin\Debug\net7.0\Script\Systems\LightingSystem.cs
 C:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\SlutprojektProg2\bin\Debug\net7.0\Script\Systems\PhysicsSystem.cs
@@ -186,3 +181,7 @@ C:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\Slutpro
 C:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\SlutprojektProg2\bin\Debug\net7.0\Script\IInteractable.cs
 C:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\SlutprojektProg2\bin\Debug\net7.0\Script\Core\Config.cs
 C:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\SlutprojektProg2\bin\Debug\net7.0\Script\ECS\Entities\ItemEntity.cs
+c:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\SlutprojektProg2\bin\Debug\net7.0\Script\Inventory\CraftingInterface.cs
+c:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\SlutprojektProg2\bin\Debug\net7.0\Images\LowerSandTile.png
+c:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\SlutprojektProg2\bin\Debug\net7.0\Images\SandStoneTile.png
+c:\Users\macho\Downloads\SlutprojektPROG2-main (1)\SlutprojektPROG2-main\SlutprojektProg2\bin\Debug\net7.0\Images\SandTile.png
