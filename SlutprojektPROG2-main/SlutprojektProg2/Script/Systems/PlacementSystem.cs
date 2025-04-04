@@ -31,9 +31,9 @@ public class PlacementSystem : GameSystem
             TilePref currentTile = WorldGeneration.tilemap[posX, posY];
             Console.WriteLine(currentTile);
 
-            bool canPlace = WorldGeneration.tilemap[posX, posY + 1] != null || WorldGeneration.tilemap[posX + 1, posY] != null || WorldGeneration.tilemap[posX - 1, posY] != null;
+            bool cantPlace = WorldGeneration.tilemap[posX, posY + 1] == null && WorldGeneration.tilemap[posX + 1, posY] == null && WorldGeneration.tilemap[posX - 1, posY] == null && WorldGeneration.tilemap[posX, posY - 1] == null;
 
-            if ((currentTile == null || currentTile.tag == "BackgroundTile") && canPlace && WorldGeneration.tilemap[posX, posY + 1] != null && !Raylib.CheckCollisionPointRec(Raylib.GetScreenToWorld2D(Raylib.GetMousePosition(), Game.camera), player.collider.boxCollider))
+            if ((currentTile == null || currentTile.tag == "BackgroundTile") && !cantPlace && !Raylib.CheckCollisionPointRec(Raylib.GetScreenToWorld2D(Raylib.GetMousePosition(), Game.camera), player.collider.boxCollider))
             {
                 TilePref tile = placeableItem.TilePrefToPlace(pos * 80);
                 worldGeneration.SpawnTilePrefab(tile);

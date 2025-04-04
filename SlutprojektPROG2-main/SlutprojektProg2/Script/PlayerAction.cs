@@ -23,10 +23,10 @@ public class PlayerAction
     {
         if (isRotating)
         {
-            // Increment rotation towards the target rotation
+
             if (rotation != targetRotation)
             {
-                rotation = Raymath.Lerp(rotation, targetRotation * xScale, 0.3f);
+                rotation = Raymath.Lerp(rotation, targetRotation * xScale, 16f * Raylib.GetFrameTime());
             }
             else
             {
@@ -44,7 +44,7 @@ public class PlayerAction
 
     private bool isRotating = false;
     private float targetRotation = -90f;
-    private const float rotationSpeed = 90f; // Degrees per second
+    private const float rotationSpeed = 90f; 
 
     public int yScale = 1;
     public int xScale = 1;

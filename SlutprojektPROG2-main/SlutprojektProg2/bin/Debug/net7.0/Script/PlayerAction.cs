@@ -26,7 +26,7 @@ public class PlayerAction
             // Increment rotation towards the target rotation
             if (rotation != targetRotation)
             {
-                rotation = Raymath.Lerp(rotation, targetRotation * xScale, 0.3f);
+                rotation = Raymath.Lerp(rotation, targetRotation * xScale, 16f * Raylib.GetFrameTime());
             }
             else
             {

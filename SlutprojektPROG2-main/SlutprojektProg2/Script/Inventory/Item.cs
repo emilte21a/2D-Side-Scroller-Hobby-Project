@@ -16,7 +16,6 @@ public abstract class Item : GameObject
 
 public sealed class StoneItem : Item, IPlaceable
 {
-    static Texture2D tex;
     public StoneItem()
     {
         name = "Stone";
@@ -26,10 +25,7 @@ public sealed class StoneItem : Item, IPlaceable
         usable = false;
         itemType = ItemType.stone;
         dropAmount = 1;
-        if (tex.Id == 0)
-            tex = Raylib.LoadTexture("Images/rockTexture.png");
-
-        texture = tex;
+        texture = TextureManager.LoadTexture("Images/rockTexture.png");
     }
     public TilePref TilePrefToPlace(Vector2 pos)
     {
@@ -39,7 +35,6 @@ public sealed class StoneItem : Item, IPlaceable
 
 public sealed class GrassItem : Item, IPlaceable
 {
-    static Texture2D tex;
     public GrassItem()
     {
         name = "Grass";
@@ -49,10 +44,7 @@ public sealed class GrassItem : Item, IPlaceable
         usable = false;
         dropAmount = 1;
         itemType = ItemType.grass;
-        if (tex.Id == 0)
-            tex = Raylib.LoadTexture("Images/grassTexture.png");
-
-        texture = tex;
+        texture = TextureManager.LoadTexture("Images/grassTexture.png");
     }
     public TilePref TilePrefToPlace(Vector2 pos)
     {
@@ -62,7 +54,6 @@ public sealed class GrassItem : Item, IPlaceable
 
 public sealed class DirtItem : Item, IPlaceable
 {
-    static Texture2D tex;
     public DirtItem()
     {
         name = "Dirt";
@@ -72,10 +63,8 @@ public sealed class DirtItem : Item, IPlaceable
         usable = false;
         dropAmount = 1;
         itemType = ItemType.dirt;
-        if (tex.Id == 0)
-            tex = Raylib.LoadTexture("Images/dirtTexture.png");
 
-        texture = tex;
+        texture = TextureManager.LoadTexture("Images/dirtTexture.png");
     }
     public TilePref TilePrefToPlace(Vector2 pos)
     {
@@ -85,7 +74,6 @@ public sealed class DirtItem : Item, IPlaceable
 
 public sealed class WoodItem : Item
 {
-    static Texture2D tex;
     public WoodItem()
     {
         name = "Wood";
@@ -95,17 +83,14 @@ public sealed class WoodItem : Item
         usable = false;
         itemType = ItemType.wood;
         dropAmount = 6;
-        if (tex.Id == 0)
-            tex = Raylib.LoadTexture("Images/woodTexture.png");
 
-        texture = tex;
+        texture = TextureManager.LoadTexture("Images/woodTexture.png");
     }
 
 }
 
 public sealed class StickItem : Item
 {
-    static Texture2D tex;
     public StickItem()
     {
         name = "Stick";
@@ -115,9 +100,7 @@ public sealed class StickItem : Item
         usable = false;
         itemType = ItemType.stick;
 
-        if (tex.Id == 0)
-            tex = Raylib.LoadTexture("Images/stickTexture.png");
-        texture = tex;
+        texture = TextureManager.LoadTexture("Images/stickTexture.png");
 
 
         recipe = new() { { new WoodItem(), 1 } };
@@ -126,40 +109,34 @@ public sealed class StickItem : Item
 
 public sealed class WoodPickaxe : Item
 {
-    static Texture2D tex;
     public WoodPickaxe()
     {
         name = "Wooden Pickaxe";
         ID = 5;
         stackable = false;
-        craftable = false;
+        craftable = true;
         usable = true;
         itemDamage = 10;
         itemType = ItemType.woodenPickaxe;
 
-        if (tex.Id == 0)
-            tex = Raylib.LoadTexture("Images/woodenPickaxeTexture.png");
-        texture = tex;
+        texture = TextureManager.LoadTexture("Images/woodenPickaxeTexture.png");
 
         recipe = new() { { new StickItem(), 1 }, { new WoodItem(), 2 } };
     }
 }
 public sealed class StoneAxe : Item
 {
-    static Texture2D tex;
     public StoneAxe()
     {
         name = "Stone Axe";
         ID = 6;
         stackable = false;
-        craftable = false;
+        craftable = true;
         usable = true;
-        itemDamage = 15;
+        itemDamage = 25;
         itemType = ItemType.stoneAxe;
 
-        if (tex.Id == 0)
-            tex = Raylib.LoadTexture("Images/stoneAxeTexture.png");
-        texture = tex;
+        texture = TextureManager.LoadTexture("Images/stoneAxeTexture.png");
 
         recipe = new() { { new StickItem(), 1 }, { new StoneItem(), 2 } };
     }
@@ -167,8 +144,6 @@ public sealed class StoneAxe : Item
 
 public sealed class CraftingTableItem : Item, IPlaceable
 {
-    static Texture2D tex;
-
     public CraftingTableItem()
     {
         name = "Crafting Table";
@@ -177,10 +152,7 @@ public sealed class CraftingTableItem : Item, IPlaceable
         craftable = true;
         usable = true;
 
-        if (tex.Id == 0)
-            tex = Raylib.LoadTexture("Images/craftingTableIcon.png");
-
-        texture = tex;
+        texture = TextureManager.LoadTexture("Images/craftingTableIcon.png");
         recipe = new() { { new WoodItem(), 4 } };
     }
 
@@ -192,8 +164,6 @@ public sealed class CraftingTableItem : Item, IPlaceable
 
 public sealed class TorchItem : Item, IPlaceable
 {
-    static Texture2D tex;
-
     public TorchItem()
     {
         name = "Torch";
@@ -201,10 +171,8 @@ public sealed class TorchItem : Item, IPlaceable
         stackable = true;
         craftable = true;
         usable = false;
-        if (tex.Id == 0)
-            tex = Raylib.LoadTexture("Images/torchTexture.png");
-
-        texture = tex;
+      
+        texture = TextureManager.LoadTexture("Images/torchTexture.png");
 
         recipe = new() { { new StickItem(), 1 } };
     }

@@ -1,5 +1,6 @@
 global using Raylib_cs;
 global using System.Numerics;
+global using System;
 global using System.Collections.Generic;
 global using System.Collections.Concurrent;
 global using System.Linq;
@@ -9,7 +10,6 @@ using Raylib = Raylib_cs.Raylib;
 using Color = Raylib_cs.Color;
 using KeyboardKey = Raylib_cs.KeyboardKey;
 using Camera2D = Raylib_cs.Camera2D;
-using System.Formats.Asn1;
 using Rectangle = Raylib_cs.Rectangle;
 
 public class Game
@@ -41,7 +41,7 @@ public class Game
 
     public static bool shouldShowCraftingInterface = false;
 
-
+    public PlacementSystem placementSystem;
 
     //Multithreading/Task
     Task updateDayNightCycle;
@@ -51,13 +51,11 @@ public class Game
         Raylib.InitWindow(ScreenWidth, ScreenHeight, "game");
         Raylib.SetExitKey(KeyboardKey.Null);
         Raylib.SetConfigFlags(Raylib_cs.ConfigFlags.ResizableWindow);
-        Raylib.SetTargetFPS(144);
+        
         Raylib.InitAudioDevice();
         gameObjectsToDestroy = new List<GameObject>();
         InitializeInstances();
         lightingSystem.InstantiateLightMap(); // Måste köras efter initwindow
-
-        // gameObjects = new ObservableCollection<GameObject>(WorldGeneration.gameObjectsInWorld);
 
         drawables = new List<IDrawable>();
         drawables.Add(worldGeneration);
@@ -66,10 +64,13 @@ public class Game
 
     private void InitializeInstances()
     {
+        placementSystem = new PlacementSystem();
+
         gameSystems = new List<GameSystem>();
         gameSystems.Add(new PhysicsSystem());
         gameSystems.Add(new CollisionSystem());
         gameSystems.Add(new AudioSystem());
+        gameSystems.Add(placementSystem);
 
         camera = new()
         {
@@ -77,6 +78,7 @@ public class Game
             Offset = new Vector2(ScreenWidth / 2, ScreenHeight / 2 + 60),
             Zoom = 0.9f
         };
+
         sceneHandler = new();
         dayNightSystem = new DayNightSystem();
         gUIcontroller = new GUIcontroller();
@@ -84,10 +86,9 @@ public class Game
         player = new Player() { camera = camera };
         parallaxManager = new ParallaxManager();
         lightingSystem = new LightingSystem();
-        craftingInterface = new CraftingInterface();
+        craftingInterface = new CraftingInterface(player);
 
         worldGeneration.GenerateWorld();
-
 
         entities = new();
         entities.Add(player);
@@ -132,31 +133,16 @@ public class Game
             player.Update(); //Spelaren
             gameSystems[1].Update(); //Kollisioner
 
+            gameSystems[3].Update(); // Placering
+
             camera.Target = Raymath.Vector2Lerp(camera.Target, player.position, 0.6f);
             parallaxManager.Update(player);
 
+            if (shouldShowCraftingInterface) craftingInterface.UpdateCraftingInterface();
+
             if (Raylib.IsMouseButtonPressed(Raylib_cs.MouseButton.Right) && player.inventory.currentActiveItem is IPlaceable placeableItem && player.inventory.currentActiveItem != null)
             {
-                Vector2 pos = PlacementSystem.WorldToTile(Raylib.GetScreenToWorld2D(Raylib.GetMousePosition(), camera), 80);
-
-                int posX = (int)pos.X;
-                int posY = (int)pos.Y;
-
-                if (posX >= 0 && posX < WorldGeneration.tilemap.GetLength(0) && posY >= 0 && posY < WorldGeneration.tilemap.GetLength(1))
-                {
-                    TilePref currentTile = WorldGeneration.tilemap[posX, posY];
-                    Console.WriteLine(currentTile);
-
-                    bool canPlace = WorldGeneration.tilemap[posX, posY + 1] != null || WorldGeneration.tilemap[posX + 1, posY] != null || WorldGeneration.tilemap[posX - 1, posY] != null;
-
-                    if ((currentTile == null || currentTile.tag == "BackgroundTile") && canPlace && WorldGeneration.tilemap[posX, posY + 1] != null && !Raylib.CheckCollisionPointRec(Raylib.GetScreenToWorld2D(Raylib.GetMousePosition(), camera), player.collider.boxCollider))
-                    {
-                        TilePref tile = placeableItem.TilePrefToPlace(pos * 80);
-                        worldGeneration.SpawnTilePrefab(tile);
-                        WorldGeneration.tilemap[posX, posY] = tile;
-                        player.inventory.itemsInInventory[player.inventory.currentActiveItem]--;
-                    }
-                }
+                placementSystem.PlaceTile(player, worldGeneration, placeableItem);
             }
 
             if (Raylib.IsKeyPressed(KeyboardKey.O))
@@ -199,6 +185,7 @@ public class Game
             dayNightSystem.DrawNightOverlay();
             player.inventory.Draw();
             gUIcontroller.Draw(player.healthPoints);
+
             if (shouldShowCraftingInterface)
                 craftingInterface.Draw();
 
@@ -219,6 +206,7 @@ public class Game
             if (Raylib.IsKeyPressed(KeyboardKey.Escape))
             {
                 paused = true;
+                
             }
             if (paused)
             {

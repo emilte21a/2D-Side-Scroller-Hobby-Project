@@ -76,6 +76,8 @@ public sealed class Player : Entity, IDrawable
                 interactable.OnInteract();
             }
         }
+        else
+            Game.shouldShowCraftingInterface = false;
 
         if (playerState == PlayerState.inGame)
         {
@@ -97,6 +99,8 @@ public sealed class Player : Entity, IDrawable
 
             playerAction.Update();
 
+
+
             if (ItemManager.itemsOnGround.Count > 0)
             {
                 for (int i = 0; i < ItemManager.itemsOnGround.Count; i++)
@@ -109,7 +113,6 @@ public sealed class Player : Entity, IDrawable
 
                         Game.entities.Remove(ItemManager.itemsOnGround[i]);
                         ItemManager.itemsOnGround.Remove(ItemManager.itemsOnGround[i]);
-
                     }
                 }
             }
@@ -161,6 +164,11 @@ public sealed class Player : Entity, IDrawable
         playerAction.rotation,
         Color.White
         );
+    }
+
+    public Dictionary<Item, int> GetItems()
+    {
+        return inventory.itemsInInventory;
     }
 }
 

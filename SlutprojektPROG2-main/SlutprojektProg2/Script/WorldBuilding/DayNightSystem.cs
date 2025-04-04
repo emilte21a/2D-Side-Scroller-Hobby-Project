@@ -50,16 +50,16 @@ public class DayNightSystem
     private void DrawCelestialBodies()
     {
         Raylib.DrawTexturePro(sunSprite,
-            new Rectangle(0, 0, sunSprite.Width, sunSprite.Height), // Source rectangle (whole texture)
-            new Rectangle(Game.ScreenWidth / 2, Game.ScreenHeight / 2, sunSprite.Width, sunSprite.Height), // Destination rectangle
-            new Vector2(600, 250 / 2), // Origin (center of texture)
+            new Rectangle(0, 0, sunSprite.Width, sunSprite.Height), 
+            new Rectangle(Game.ScreenWidth / 2, Game.ScreenHeight / 2, sunSprite.Width, sunSprite.Height), 
+            new Vector2(600, 250 / 2), 
             _rotation,
             Color.White);
 
         Raylib.DrawTexturePro(moonSprite,
-            new Rectangle(0, 0, sunSprite.Width, sunSprite.Height), // Source rectangle (whole texture)
-            new Rectangle(Game.ScreenWidth / 2, Game.ScreenHeight / 2, sunSprite.Width, sunSprite.Height), // Destination rectangle
-            new Vector2(600, 250 / 2), // Origin (center of texture)
+            new Rectangle(0, 0, sunSprite.Width, sunSprite.Height), 
+            new Rectangle(Game.ScreenWidth / 2, Game.ScreenHeight / 2, sunSprite.Width, sunSprite.Height),
+            new Vector2(600, 250 / 2), 
             _rotation + 180,
             Color.White);
     }

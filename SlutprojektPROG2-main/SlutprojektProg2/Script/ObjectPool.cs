@@ -1,3 +1,8 @@
+
+/*
+  WARNING... Not my code.
+*/
+
 public class ObjectPool<T> where T : new()
 {
   // list to hold the objects
